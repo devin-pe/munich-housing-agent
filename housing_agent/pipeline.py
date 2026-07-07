@@ -49,6 +49,15 @@ def run(config: Config, dry_run: bool = False) -> int:
     logger.info("Scraped %d raw listings; failed sources: %s",
                 len(listings), failed_sources or "none")
 
+    # Defensive within-run de-duplication by dedup_key, so a source emitting the
+    # same listing twice can never produce duplicate entries in the digest.
+    unique: dict[str, Listing] = {}
+    for lg in listings:
+        unique.setdefault(lg.dedup_key(), lg)
+    if len(unique) != len(listings):
+        logger.info("Collapsed %d duplicate listing(s) within this run", len(listings) - len(unique))
+    listings = list(unique.values())
+
     # 1. Attribute filter (price/rooms/furnished + warm normalization)
     listings, _ = apply_filters(listings, config)
 

@@ -91,6 +91,8 @@ class SpacestScraper(BaseScraper):
 
     def scrape(self) -> list[Listing]:
         listings: list[Listing] = []
+        seen: set[str] = set()   # Spacest's ?page= param is unreliable (repeats a
+        # result set) and studios/one-bedroom overlap, so dedupe by id globally.
         max_pages = max(1, self.source_cfg.max_pages)
         for sub, zimmer in SUBPATHS.items():
             base = f"{self._base_path()}/{sub}"
@@ -104,12 +106,16 @@ class SpacestScraper(BaseScraper):
                 block = self._listings_block(resp.text)
                 if not block:
                     break
-                data = block.get("data") or []
-                for item in data:
+                new = 0
+                for item in block.get("data") or []:
                     lg = self._to_listing(item, zimmer)
-                    if lg:
+                    if lg and lg.listing_id not in seen:
+                        seen.add(lg.listing_id)
                         listings.append(lg)
-                if page + 1 >= int(block.get("totalNumberPages", 1)):
+                        new += 1
+                # Stop paginating this subpath once a page yields no new listings
+                # (handles the flaky ?page= param that repeats results).
+                if new == 0:
                     break
         logger.info("[spacest] collected %d raw listings", len(listings))
         return listings

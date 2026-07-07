@@ -5,9 +5,9 @@ We use the `1-zimmer-wohnungen` category (self-contained 1-room apartments — N
 the `wg-zimmer` shared-room category), with the furnished (fur=1) and max-rent
 (rMax) filters applied in the URL.
 
-Prices are Kaltmiete (cold rent); the central filter estimates Warmmiete by adding
-the configured Nebenkosten and flags it. Cards have no coordinates → geocoded
-downstream from the district/street.
+The single price shown on WG-Gesucht offer cards is the all-inclusive monthly rent
+(these furnished lettings quote a total), so we treat it as Warmmiete — no
+Nebenkosten estimate is added. Cards have no coordinates → geocoded downstream.
 
 MODULARITY: WG-Gesucht identifies cities by a numeric city_id AND a name slug, so
 new cities need an entry in CITY_IDS below.
@@ -82,7 +82,7 @@ class WgGesuchtScraper(BaseScraper):
             listing_id=str(listing_id),
             title=title[:140],
             price_eur=price,
-            price_type="kalt",     # WG-Gesucht "Miete" is cold rent
+            price_type="warm",     # card price is the all-inclusive total
             rooms=parse_rooms(title) or 1,   # 1-zimmer category
             furnished=True,        # fur=1 filter
             address_or_area=area,
