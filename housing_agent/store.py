@@ -1,9 +1,9 @@
 """Dedup store — remembers which listings have already been emailed.
 
-Backed by a small JSON file (data/seen.json) rather than SQLite so it can be
-committed to the repo and reliably carried between GitHub Actions runs (a cache is
-best-effort and was dropping state, causing duplicate digests). The file is tiny
-(one entry per sent listing) and diff-friendly.
+Backed by a small JSON file (data/seen.json) rather than SQLite so it is easy to
+persist reliably between runs. In GitHub Actions the workflow carries this file on
+a dedicated `agent-state` branch (a cache proved best-effort and dropped state,
+causing duplicate digests). The file is tiny (one entry per sent listing).
 
 Keyed by Listing.dedup_key() = "source:listing_id" (or a URL hash fallback).
 Newly-sent listings are recorded ONLY after a successful send, so a failed send

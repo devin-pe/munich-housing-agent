@@ -1,10 +1,10 @@
 # Secrets
 .env
 
-# Runtime data (geocode/route caches, logs, digest previews, old sqlite store)
-# — but DO track data/seen.json, the dedup state, so it persists across CI runs.
-data/*
-!data/seen.json
+# Runtime data (dedup store, geocode/route caches, logs, digest previews).
+# In CI the dedup state (data/seen.json) is persisted on a separate `agent-state`
+# git branch by the workflow — not tracked on main — so main stays clean.
+data/
 *.log
 
 # Python

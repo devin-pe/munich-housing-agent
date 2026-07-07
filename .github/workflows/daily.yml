@@ -10,7 +10,7 @@ on:
     - cron: "0 10 * * *"    # 10:00 UTC = 12:00 (noon) Europe/Berlin during summer
   workflow_dispatch: {}      # allow manual "Run workflow" from the Actions tab
 
-# Needed so the job can commit the updated dedup state (data/seen.json) back.
+# Needed so the job can push the dedup state to the `agent-state` branch.
 permissions:
   contents: write
 
@@ -32,25 +32,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Restore the dedup store from the dedicated state branch (if it exists yet),
+      # so we only email genuinely NEW listings. State lives on `agent-state`, NOT
+      # on main — main stays clean and your own pushes never conflict.
+      - name: Restore dedup state
+        run: |
+          mkdir -p data
+          if git fetch origin agent-state 2>/dev/null; then
+            git cat-file -p origin/agent-state:seen.json > data/seen.json 2>/dev/null || echo '{}' > data/seen.json
+          else
+            echo '{}' > data/seen.json
+          fi
+
       - name: Run housing agent
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: python -m housing_agent
 
-      # Persist dedup state reliably by committing data/seen.json back to the repo,
-      # so the next run only emails genuinely NEW listings. (Committed state is
-      # deterministic, unlike the previous best-effort cache.) [skip ci] stops this
-      # commit from triggering another workflow run.
-      - name: Persist dedup state
+      # Save the updated dedup store back to `agent-state` using git plumbing: build
+      # a single-commit (parent-less) branch containing only seen.json and force-push
+      # it. No history bloat, no commits on main, deterministic across runs.
+      - name: Save dedup state
         if: always()
+        env:
+          GIT_AUTHOR_NAME: "housing-agent[bot]"
+          GIT_AUTHOR_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
+          GIT_COMMITTER_NAME: "housing-agent[bot]"
+          GIT_COMMITTER_EMAIL: "41898282+github-actions[bot]@users.noreply.github.com"
         run: |
-          git config user.name "housing-agent[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/seen.json || true
-          if git diff --staged --quiet; then
-            echo "No dedup changes to commit."
-          else
-            git commit -m "Update dedup state [skip ci]"
-            git push
-          fi
+          test -f data/seen.json || exit 0
+          blob=$(git hash-object -w data/seen.json)
+          tree=$(printf '100644 blob %s\tseen.json\n' "$blob" | git mktree)
+          commit=$(git commit-tree "$tree" -m "Update dedup state $(date -u +%FT%TZ)")
+          git push -f origin "$commit:refs/heads/agent-state"

@@ -179,10 +179,15 @@ downstream (scrapers, geocoding, commute, filters, email) reads from these value
 ### Option A — GitHub Actions (runs in the cloud, no machine needed)
 
 The workflow is at [`.github/workflows/daily.yml`](.github/workflows/daily.yml)
-(daily at ~08:00 Europe/Berlin). Set repository **Secrets** (Settings → Secrets and
+(daily at ~12:00 Europe/Berlin). Set repository **Secrets** (Settings → Secrets and
 variables → Actions): `GOOGLE_MAPS_API_KEY` and `RESEND_API_KEY` (or the `SMTP_*`
-vars if you use SMTP). Trigger a manual run from the Actions tab to test. Dedup
-state is cached between runs (best-effort — see the workflow comments).
+vars if you use SMTP). Trigger a manual run from the Actions tab to test.
+
+**Dedup state** is persisted reliably on a dedicated `agent-state` branch: the
+workflow restores `seen.json` from it before each run and force-pushes the updated
+copy after. `main` stays clean (no automated commits), so your own pushes never
+conflict. The very first run after enabling this sends the full digest once (empty
+state), then every later run emails only genuinely new listings.
 
 ### Option B — cron on a local machine / VPS
 
