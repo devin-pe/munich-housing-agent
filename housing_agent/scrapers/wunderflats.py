@@ -74,7 +74,9 @@ class WunderflatsScraper(BaseScraper):
         move_from = s.earliest_move_in or s.move_in_date
         if move_from:
             params["from"] = move_from
-            move_to = self._window_end(move_from, s.min_lease_months)
+            # Require availability through the configured end date (excludes listings
+            # that end too early); fall back to from + min_lease_months.
+            move_to = s.min_available_until or self._window_end(move_from, s.min_lease_months)
             if move_to:
                 params["to"] = move_to
         query = "&".join(f"{k}={v}" for k, v in params.items())

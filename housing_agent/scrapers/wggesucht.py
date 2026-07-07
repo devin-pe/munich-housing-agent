@@ -24,7 +24,7 @@ import re
 from selectolax.parser import HTMLParser, Node
 
 from ..models import Listing
-from ._util import parse_price_eur, parse_rooms, parse_sqm
+from ._util import parse_end_date, parse_price_eur, parse_rooms, parse_sqm
 from .base import BaseScraper
 
 logger = logging.getLogger("housing_agent")
@@ -88,6 +88,7 @@ class WgGesuchtScraper(BaseScraper):
             address_or_area=area,
             lat=None, lng=None,    # geocoded downstream
             area_sqm=parse_sqm(text),
+            available_until=parse_end_date(text),   # fixed-term sublets expose an end date
         )
 
     def scrape(self) -> list[Listing]:

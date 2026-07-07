@@ -11,6 +11,12 @@ import re
 _PRICE_RE = re.compile(r"(\d[\d.,]*)")
 _ROOMS_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:zimmer|zi\b|rooms?|room)", re.I)
 _SQM_RE = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:m²|m2|qm|sqm|m\b)", re.I)
+# A German date dd.mm.yyyy (or dd.mm.yy). Used to detect fixed-term sublet ranges.
+_DATE_RE = re.compile(r"(\d{1,2})\.(\d{1,2})\.(\d{2,4})")
+# A date range "dd.mm.yyyy - dd.mm.yyyy" or an explicit "bis dd.mm.yyyy".
+_RANGE_RE = re.compile(
+    r"\d{1,2}\.\d{1,2}\.\d{2,4}\s*[-–—]\s*(\d{1,2}\.\d{1,2}\.\d{2,4})"
+    r"|bis\s*(\d{1,2}\.\d{1,2}\.\d{2,4})", re.I)
 
 
 def parse_price_eur(text: str | None) -> float | None:
@@ -48,5 +54,29 @@ def parse_sqm(text: str | None) -> float | None:
         return None
     try:
         return float(m.group(1).replace(",", "."))
+    except ValueError:
+        return None
+
+
+def parse_end_date(text: str | None) -> str | None:
+    """Return the lease END date (ISO 'YYYY-MM-DD') if the text advertises a
+    fixed-term rental — either a 'dd.mm.yyyy - dd.mm.yyyy' range or 'bis dd.mm.yyyy'.
+    Open-ended listings (a single 'from' date, or no dates) return None so they are
+    treated as available indefinitely."""
+    if not text:
+        return None
+    m = _RANGE_RE.search(text)
+    if not m:
+        return None
+    raw = m.group(1) or m.group(2)
+    dm = _DATE_RE.search(raw or "")
+    if not dm:
+        return None
+    day, month, year = int(dm.group(1)), int(dm.group(2)), int(dm.group(3))
+    if year < 100:
+        year += 2000
+    try:
+        from datetime import date
+        return date(year, month, day).isoformat()
     except ValueError:
         return None

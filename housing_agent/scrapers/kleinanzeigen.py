@@ -26,7 +26,7 @@ import re
 from selectolax.parser import HTMLParser, Node
 
 from ..models import Listing
-from ._util import parse_price_eur, parse_rooms, parse_sqm
+from ._util import parse_end_date, parse_price_eur, parse_rooms, parse_sqm
 from .base import BaseScraper
 
 logger = logging.getLogger("housing_agent")
@@ -77,6 +77,7 @@ class KleinanzeigenScraper(BaseScraper):
             address_or_area=re.sub(r"\s+", " ", area),
             lat=None, lng=None,
             area_sqm=parse_sqm(text),
+            available_until=parse_end_date(text),
         )
 
     def scrape(self) -> list[Listing]:

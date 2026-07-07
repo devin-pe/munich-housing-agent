@@ -166,16 +166,15 @@ class HousingAnywhereScraper(BaseScraper):
             tree = HTMLParser(resp.text)
             cards = tree.css('[data-test-locator="ListingCard"]')
             if not cards:
+                # No cards at all = end of results. (We must NOT stop merely because
+                # a page had no new *apartments* — many HA pages are all shared
+                # rooms, which we skip, and apartments appear on later pages.)
                 logger.info("[housinganywhere] no cards on page %d — stopping", page)
                 break
-            new_on_page = 0
             for card in cards:
                 lg = self._card_to_listing(card)
                 if lg and lg.listing_id not in seen_ids:
                     seen_ids.add(lg.listing_id)
                     listings.append(lg)
-                    new_on_page += 1
-            if new_on_page == 0:  # pagination exhausted / repeating
-                break
         logger.info("[housinganywhere] collected %d raw listings", len(listings))
         return listings

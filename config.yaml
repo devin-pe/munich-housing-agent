@@ -41,6 +41,10 @@ search:
   # Optional: minimum lease length in months (used to set the availability window
   # end date). Leave blank/null to not constrain the move-out date.
   min_lease_months: 6
+  # Drop listings whose lease END date is before this (excludes short sublets that
+  # end too early). Applied where a source exposes an end date; Wunderflats uses it
+  # as the availability window end. Leave blank/null to disable.
+  min_available_until: "2027-01-01"
 
   # When a listing only advertises Kaltmiete, estimate Warm = Kalt + this amount.
   # Such listings are clearly flagged "estimated" in the digest.
@@ -52,27 +56,27 @@ sources:
   wunderflats:                   # inline JSON, coords included — most reliable
     enabled: true
     engine: http
-    max_pages: 4                 # 30 listings/page; 4 pages ≈ 120 candidates
+    max_pages: 8                 # 30 listings/page; covers the full matching set
   housinganywhere:               # server-rendered cards, geocoded
     enabled: true
     engine: http
-    max_pages: 3
+    max_pages: 6                 # ~8 apartments/page; many pages are shared rooms
   spacest:                       # inline __NEXT_DATA__ JSON, coords included
     enabled: true
     engine: http
-    max_pages: 3
+    max_pages: 2                 # server pagination is broken (~20 unique max)
   wggesucht:                     # server-rendered cards, geocoded (1-Zimmer möbliert)
     enabled: true
     engine: http
-    max_pages: 2
+    max_pages: 3
   kleinanzeigen:                 # server-rendered cards, geocoded (furnished-by-title)
     enabled: true
     engine: http
-    max_pages: 2
-  mrlodge:                       # Munich furnished agency, server-rendered, geocoded
+    max_pages: 3
+  mrlodge:                       # Munich furnished agency, TYPO3 pagination, geocoded
     enabled: true
     engine: http
-    max_pages: 1
+    max_pages: 15                # ~16/page/category; stops early when a page is empty
   immowelt:
     # DISABLED: DataDome-protected — works intermittently over plain HTTP but is
     # usually challenged from datacenter IPs. Fails gracefully when blocked.

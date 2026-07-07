@@ -30,6 +30,7 @@ class Listing:
     lng: Optional[float] = None
     posted_date: Optional[str] = None   # ISO date if the source exposes it
     area_sqm: Optional[float] = None
+    available_until: Optional[str] = None   # ISO date the listing is available until (if known)
 
     # ── enrichment (filled in later by the pipeline) ──────────────────────────
     price_is_estimated: bool = False    # True when warm was derived from kalt + NK

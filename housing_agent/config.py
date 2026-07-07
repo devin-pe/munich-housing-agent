@@ -31,6 +31,7 @@ class SearchConfig:
     move_in_date: str | None
     earliest_move_in: str | None
     min_lease_months: int | None
+    min_available_until: str | None   # drop listings whose lease ends before this (ISO date)
 
 
 @dataclass
@@ -129,6 +130,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         move_in_date=(str(s["move_in_date"]) if s.get("move_in_date") else None),
         earliest_move_in=(str(s["earliest_move_in"]) if s.get("earliest_move_in") else None),
         min_lease_months=(int(s["min_lease_months"]) if s.get("min_lease_months") else None),
+        min_available_until=(str(s["min_available_until"]) if s.get("min_available_until") else None),
     )
 
     sources: dict[str, SourceConfig] = {}

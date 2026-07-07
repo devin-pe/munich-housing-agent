@@ -38,11 +38,12 @@ CATEGORIES = ["1-room-studio-apartments", "2-room-apartments"]
 class MrLodgeScraper(BaseScraper):
     name = "mrlodge"
 
-    def _category_url(self, category: str) -> str:
+    def _category_url(self, category: str, page: int) -> str:
         city = self.config.search.city.strip().lower()
-        # Pagination is client-side (?page= returns the same HTML), so we fetch one
-        # page per category; a boutique agency's per-category inventory is small.
-        return f"{BASE}/rentals/{city}/{category}"
+        url = f"{BASE}/rentals/{city}/{category}"
+        # Mr. Lodge runs on TYPO3; pagination is a plugin param (1-indexed). The
+        # empty pagination <div> is filled by JS, but the server honors this param.
+        return url if page <= 1 else f"{url}?tx_tdomrlodge_rentalpropertylist[page]={page}"
 
     def _card_to_listing(self, card: Node) -> Listing | None:
         link = card.css_first('a[href^="/rent/"]')
@@ -84,17 +85,25 @@ class MrLodgeScraper(BaseScraper):
     def scrape(self) -> list[Listing]:
         listings: list[Listing] = []
         seen: set[str] = set()
+        # Safety cap on pages per category (16 listings/page); we stop earlier when
+        # a page yields no new listings.
+        page_cap = max(self.source_cfg.max_pages, 15)
         for category in CATEGORIES:
-            try:
-                resp = self.get(self._category_url(category))
-            except Exception as exc:
-                logger.warning("[mrlodge] %s fetch failed: %s", category, exc)
-                continue
-            tree = HTMLParser(resp.text)
-            for card in tree.css("div.card"):
-                lg = self._card_to_listing(card)
-                if lg and lg.listing_id not in seen:
-                    seen.add(lg.listing_id)
-                    listings.append(lg)
+            for page in range(1, page_cap + 1):
+                try:
+                    resp = self.get(self._category_url(category, page))
+                except Exception as exc:
+                    logger.warning("[mrlodge] %s page %d failed: %s", category, page, exc)
+                    break
+                cards = HTMLParser(resp.text).css("div.card")
+                new = 0
+                for card in cards:
+                    lg = self._card_to_listing(card)
+                    if lg and lg.listing_id not in seen:
+                        seen.add(lg.listing_id)
+                        listings.append(lg)
+                        new += 1
+                if new == 0:   # no new listings on this page -> end of category
+                    break
         logger.info("[mrlodge] collected %d raw listings", len(listings))
         return listings

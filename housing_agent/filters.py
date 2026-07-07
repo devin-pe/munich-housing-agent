@@ -18,10 +18,17 @@ from .models import Listing
 
 logger = logging.getLogger("housing_agent")
 
-# Titles that indicate a student-only listing even when the structured flag is unset.
-# Deliberately narrow so "perfect for students and professionals" is NOT matched.
+# Titles/text that indicate a student-only listing even when a structured flag is
+# unset. Kept reasonably tight so "perfect for students and professionals" is NOT
+# matched, while catching exclusive phrasing and student residences/dorms.
 _STUDENT_ONLY_RE = re.compile(
-    r"(only\s+(for|available\s+for)\s+students|students?\s+only|nur\s+f(ü|ue)r\s+studenten|studenten\s+only)",
+    r"only\s+(?:for|available\s+for)\s+students"
+    r"|students?\s+only"
+    r"|nur\s+f(?:ü|ue)r\s+studenten"
+    r"|studenten\s+only"
+    r"|only\s+students"
+    r"|student(?:en)?wohnheim"          # student dormitory (inherently student-only)
+    r"|student\s+(?:residence|hall|dorm|housing\s+only)",
     re.I,
 )
 
@@ -29,7 +36,8 @@ _STUDENT_ONLY_RE = re.compile(
 def _is_student_only(listing: Listing) -> bool:
     if listing.extra.get("only_students"):
         return True
-    return bool(_STUDENT_ONLY_RE.search(listing.title or ""))
+    hay = f"{listing.title or ''} {listing.extra.get('price_label', '')}"
+    return bool(_STUDENT_ONLY_RE.search(hay))
 
 
 def compute_warm_price(listing: Listing, nebenkosten_estimate: float) -> None:
@@ -61,6 +69,7 @@ def apply_filters(listings: list[Listing], config: Config) -> tuple[list[Listing
         "dropped_furnished": 0,
         "dropped_no_price": 0,
         "dropped_student_only": 0,
+        "dropped_end_date": 0,
         "kept": 0,
     }
     kept: list[Listing] = []
@@ -72,6 +81,13 @@ def apply_filters(listings: list[Listing], config: Config) -> tuple[list[Listing
         # (checks both the structured flag and student-only phrasing in the title).
         if _is_student_only(lg):
             stats["dropped_student_only"] += 1
+            continue
+
+        # Exclude fixed-term listings that end before the required date (short
+        # sublets). Only applies when the source exposed an end date; unknown =
+        # treated as available indefinitely and kept.
+        if s.min_available_until and lg.available_until and lg.available_until < s.min_available_until:
+            stats["dropped_end_date"] += 1
             continue
 
         if lg.warm_price_eur is None:

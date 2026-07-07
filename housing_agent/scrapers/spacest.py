@@ -12,7 +12,13 @@ scrape the subpaths that map into our 1–2 Zimmer target and assign Zimmer:
 (two-bedrooms = 3 Zimmer is out of range, so we don't fetch it.)
 
 Only self-contained apartments are kept (item type == 2); rooms in shared flats
-(type == 1) are skipped.
+(type == 1) and student-campus units (isCampus) are skipped.
+
+COVERAGE LIMIT: Spacest's server-side pagination is broken — the ?page/?offset
+params (and even the _next/data endpoint) always return the same first result set;
+the full catalogue is only reachable via its authenticated API gateway. So we
+capture roughly the first page of each subpath (studios + one-bedroom, ~20 unique
+listings). This is a known cap, not a silent truncation.
 
 FRAGILE BITS (update if the site changes):
     - SEARCH base path and the subpath→Zimmer map
@@ -62,6 +68,8 @@ class SpacestScraper(BaseScraper):
 
     def _to_listing(self, item: dict, zimmer: int) -> Listing | None:
         if item.get("type") != TYPE_APARTMENT:   # skip shared rooms
+            return None
+        if item.get("isCampus"):                 # skip student-campus accommodation
             return None
         lid = item.get("id")
         if not lid:
