@@ -18,26 +18,34 @@ from .models import Listing
 
 logger = logging.getLogger("housing_agent")
 
-# Titles/text that indicate a student-only listing even when a structured flag is
-# unset. Kept reasonably tight so "perfect for students and professionals" is NOT
-# matched, while catching exclusive phrasing and student residences/dorms.
+# Text that indicates a student-only listing even when a structured flag is unset.
+# Kept reasonably tight so "perfect for students and professionals" is NOT matched,
+# while catching exclusive phrasing, enrollment requirements, and student dorms.
 _STUDENT_ONLY_RE = re.compile(
     r"only\s+(?:for|available\s+for)\s+students"
+    r"|exclusiv\w*\s+for\s+students"        # "exclusively for students"
     r"|students?\s+only"
+    r"|only\s+students"
     r"|nur\s+f(?:ü|ue)r\s+studenten"
     r"|studenten\s+only"
-    r"|only\s+students"
-    r"|student(?:en)?wohnheim"          # student dormitory (inherently student-only)
+    r"|(?:certificate|proof)\s+of\s+enroll?ment"   # student enrollment requirement
+    r"|student(?:en)?wohnheim"              # student dormitory (inherently student-only)
     r"|student\s+(?:residence|hall|dorm|housing\s+only)",
     re.I,
 )
 
 
+def is_student_only_text(*texts: str | None) -> bool:
+    """True if any of the given text fragments signals a student-only listing.
+    Shared so scrapers with richer text (e.g. Spacest descriptions) can check too."""
+    return any(_STUDENT_ONLY_RE.search(t) for t in texts if t)
+
+
 def _is_student_only(listing: Listing) -> bool:
     if listing.extra.get("only_students"):
         return True
-    hay = f"{listing.title or ''} {listing.extra.get('price_label', '')}"
-    return bool(_STUDENT_ONLY_RE.search(hay))
+    return is_student_only_text(listing.title, listing.extra.get("price_label"),
+                                listing.extra.get("student_text"))
 
 
 def compute_warm_price(listing: Listing, nebenkosten_estimate: float) -> None:
