@@ -1,0 +1,7 @@
+# Core — everything the agent needs. All scrapers use plain HTTP (no browser).
+httpx==0.27.2           # HTTP client for scrapers, Google Routes/Geocoding, Resend
+PyYAML==6.0.2           # config.yaml
+python-dotenv==1.0.1    # load secrets from .env
+selectolax==0.3.27      # fast HTML parsing for server-rendered listing cards
+
+# Email is stdlib (smtplib/email) for SMTP; Resend uses httpx. No extra deps.

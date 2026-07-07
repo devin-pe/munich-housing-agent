@@ -1,0 +1,113 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Housing Agent configuration. Everything here is safe to edit without touching
+# code. Secrets (API keys, email password) live in .env instead.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# To target a DIFFERENT city, change these four things and nothing else:
+#   search.city, search.country, search.anchor_address, and anchor_lat/lng.
+# Everything downstream (scrapers, commute, filters) is driven by these values.
+search:
+  # Commute anchor — your office. Travel time to THIS address is what gets filtered.
+  anchor_address: "OMMAX, Kaulbachstraße 4, 80539 München, Germany"
+  # Coordinates of the anchor (optional but recommended: skips a geocode call and
+  # is exact). Kaulbachstraße 4, 80539 München ≈ 48.1516, 11.5822.
+  anchor_lat: 48.1516
+  anchor_lng: 11.5822
+
+  city: "munich"                 # drives the search URLs (e.g. "berlin", "hamburg")
+  country: "Germany"             # used by sources that need it (e.g. HousingAnywhere)
+
+  max_commute_minutes: 40        # door-to-door public-transport limit
+  # Weekday morning arrival used for the transit query. The agent picks the NEXT
+  # weekday at this local time (Europe/Berlin) so results reflect a normal commute.
+  arrival_time_local: "09:00"
+
+  # Warmmiete cap (rent + Nebenkosten/utilities), in EUR/month.
+  max_price_eur: 1500
+
+  # German room counting: "1-Zimmer" = studio, "2-Zimmer" = 1 bedroom + living room.
+  # A 1-bedroom target therefore means 1–2 Zimmer.
+  min_rooms: 1
+  max_rooms: 2
+
+  furnished_required: true       # only möbliert listings
+
+  # Lease start (move-in). Primary target is move_in_date; earliest_move_in is the
+  # earliest still-acceptable date. The agent queries availability from
+  # earliest_move_in onward (a listing free from Aug 1 is also free from Sep 1),
+  # so both target and fallback dates are covered in one search.
+  move_in_date: "2026-09-01"        # preferred lease start
+  earliest_move_in: "2026-08-01"    # also acceptable
+  # Optional: minimum lease length in months (used to set the availability window
+  # end date). Leave blank/null to not constrain the move-out date.
+  min_lease_months: 6
+
+  # When a listing only advertises Kaltmiete, estimate Warm = Kalt + this amount.
+  # Such listings are clearly flagged "estimated" in the digest.
+  nebenkosten_estimate_eur: 250
+
+# Which sources to scrape. Toggle `enabled` to turn a site on/off. All current
+# sources use plain HTTP (engine: http) — no browser required.
+sources:
+  wunderflats:                   # inline JSON, coords included — most reliable
+    enabled: true
+    engine: http
+    max_pages: 4                 # 30 listings/page; 4 pages ≈ 120 candidates
+  housinganywhere:               # server-rendered cards, geocoded
+    enabled: true
+    engine: http
+    max_pages: 3
+  spacest:                       # inline __NEXT_DATA__ JSON, coords included
+    enabled: true
+    engine: http
+    max_pages: 3
+  wggesucht:                     # server-rendered cards, geocoded (1-Zimmer möbliert)
+    enabled: true
+    engine: http
+    max_pages: 2
+  kleinanzeigen:                 # server-rendered cards, geocoded (furnished-by-title)
+    enabled: true
+    engine: http
+    max_pages: 2
+  mrlodge:                       # Munich furnished agency, server-rendered, geocoded
+    enabled: true
+    engine: http
+    max_pages: 1
+  immowelt:
+    # DISABLED: DataDome-protected — works intermittently over plain HTTP but is
+    # usually challenged from datacenter IPs. Fails gracefully when blocked.
+    # (Immonet is the same platform and hard-blocked, so it isn't included.)
+    enabled: false
+    engine: http
+    max_pages: 2
+
+commute:
+  # Public-transport routing via the Google Routes API (needs GOOGLE_MAPS_API_KEY
+  # with "Routes API" + "Geocoding API" enabled). Enable Routes API, not the old
+  # legacy Directions API.
+  region: de                     # country bias for Google geocoding/routing
+  # Cache geocode + route lookups this many days to minimise paid API calls.
+  cache_ttl_days: 30
+
+email:
+  transport: resend              # resend | smtp
+  recipient: "devpereira1@gmail.com"   # Resend test mode only delivers to the Resend account address
+  sender_name: "Munich Housing Agent"
+  # From-address. For Resend without a verified domain, use their shared sender
+  # "onboarding@resend.dev" (a "dummy" sender that works out of the box). Note:
+  # in that mode Resend only delivers to the email you registered your Resend
+  # account with — verify a domain to send anywhere. Put RESEND_API_KEY in .env.
+  sender_address: "onboarding@resend.dev"
+  subject_prefix: "🏠 Munich furnished rentals"
+  # If true, still send an email even when zero new listings were found today
+  # (useful to confirm the job is alive). If false, skip sending on empty runs.
+  send_when_empty: false
+
+runtime:
+  # Polite scraping: seconds to wait between requests to the SAME source
+  # (a small random jitter is added on top).
+  request_delay_seconds: 2.5
+  request_timeout_seconds: 30
+  # Where the SQLite dedup store and caches live.
+  data_dir: "data"
+  log_level: "INFO"

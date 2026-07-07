@@ -1,0 +1,19 @@
+# Secrets
+.env
+
+# Runtime data: sqlite dedup store + geocode/route caches + logs
+data/
+*.db
+*.sqlite3
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.pytest_cache/
+
+# Scratch HTML dumps
+*.html

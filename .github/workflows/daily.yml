@@ -1,0 +1,47 @@
+name: Daily Munich housing digest
+
+# Runs once per day in the cloud (no need for your machine to be on).
+#
+# NOTE on time: GitHub Actions cron is in UTC. 10:00 UTC = 12:00 Europe/Berlin
+# during summer time (CEST, ~late Mar–late Oct). In winter (CET) it would be 11:00
+# local; change the cron to "0 11 * * *" if you still run it past October.
+on:
+  schedule:
+    - cron: "0 10 * * *"    # 10:00 UTC = 12:00 (noon) Europe/Berlin during summer
+  workflow_dispatch: {}      # allow manual "Run workflow" from the Actions tab
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: housing-digest    # never overlap runs
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Persist the dedup DB + caches between runs so you only get NEW listings.
+      # Cache is best-effort (GitHub may evict it after ~7 days of no use); a rare
+      # eviction means one repeat email. For guaranteed dedup, run on a VPS/local
+      # cron where data/ lives on disk (see README).
+      - name: Restore state (dedup DB + caches)
+        uses: actions/cache@v4
+        with:
+          path: data
+          key: housing-data-${{ github.run_id }}
+          restore-keys: |
+            housing-data-
+
+      - name: Run housing agent
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python -m housing_agent
