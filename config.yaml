@@ -77,11 +77,12 @@ sources:
     enabled: true
     engine: http
     max_pages: 15                # ~16/page/category; stops early when a page is empty
-  immowelt:
-    # DISABLED: DataDome-protected — works intermittently over plain HTTP but is
-    # usually challenged from datacenter IPs. Fails gracefully when blocked.
-    # (Immonet is the same platform and hard-blocked, so it isn't included.)
-    enabled: false
+  immowelt:                      # server-rendered cards; furnished detected in text
+    # DataDome-protected: works from residential IPs but is often challenged from
+    # datacenter IPs (e.g. GitHub Actions). Fails gracefully when blocked, so it
+    # simply contributes nothing on runs where it's challenged. (Immonet is the same
+    # platform and hard-blocked, so it isn't included.)
+    enabled: true
     engine: http
     max_pages: 2
 

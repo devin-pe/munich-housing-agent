@@ -29,6 +29,8 @@ logger = logging.getLogger("housing_agent")
 BASE = "https://www.immowelt.de"
 _FURNISHED_RE = re.compile(r"möbl|furnished", re.I)
 _EXPOSE_RE = re.compile(r"/expose/([A-Za-z0-9]+)")
+# Immowelt uses German city slugs in the URL (English "munich" -> 410 Gone).
+CITY_SLUGS = {"munich": "muenchen", "münchen": "muenchen", "muenchen": "muenchen"}
 
 
 class ImmoweltScraper(BaseScraper):
@@ -36,7 +38,7 @@ class ImmoweltScraper(BaseScraper):
 
     def _page_url(self, page: int) -> str:
         s = self.config.search
-        city = s.city.strip().lower()
+        city = CITY_SLUGS.get(s.city.strip().lower(), s.city.strip().lower())
         url = (f"{BASE}/suche/{city}/wohnungen/mieten"
                f"?ami={s.min_rooms}&ama={s.max_rooms}&pma={int(s.max_price_eur)}")
         return url if page <= 1 else f"{url}&sp={page}"
