@@ -1,10 +1,10 @@
 # Secrets
 .env
 
-# Runtime data: sqlite dedup store + geocode/route caches + logs
-data/
-*.db
-*.sqlite3
+# Runtime data (geocode/route caches, logs, digest previews, old sqlite store)
+# — but DO track data/seen.json, the dedup state, so it persists across CI runs.
+data/*
+!data/seen.json
 *.log
 
 # Python

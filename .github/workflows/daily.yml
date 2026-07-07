@@ -10,6 +10,10 @@ on:
     - cron: "0 10 * * *"    # 10:00 UTC = 12:00 (noon) Europe/Berlin during summer
   workflow_dispatch: {}      # allow manual "Run workflow" from the Actions tab
 
+# Needed so the job can commit the updated dedup state (data/seen.json) back.
+permissions:
+  contents: write
+
 jobs:
   digest:
     runs-on: ubuntu-latest
@@ -28,20 +32,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Persist the dedup DB + caches between runs so you only get NEW listings.
-      # Cache is best-effort (GitHub may evict it after ~7 days of no use); a rare
-      # eviction means one repeat email. For guaranteed dedup, run on a VPS/local
-      # cron where data/ lives on disk (see README).
-      - name: Restore state (dedup DB + caches)
-        uses: actions/cache@v4
-        with:
-          path: data
-          key: housing-data-${{ github.run_id }}
-          restore-keys: |
-            housing-data-
-
       - name: Run housing agent
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: python -m housing_agent
+
+      # Persist dedup state reliably by committing data/seen.json back to the repo,
+      # so the next run only emails genuinely NEW listings. (Committed state is
+      # deterministic, unlike the previous best-effort cache.) [skip ci] stops this
+      # commit from triggering another workflow run.
+      - name: Persist dedup state
+        if: always()
+        run: |
+          git config user.name "housing-agent[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/seen.json || true
+          if git diff --staged --quiet; then
+            echo "No dedup changes to commit."
+          else
+            git commit -m "Update dedup state [skip ci]"
+            git push
+          fi
