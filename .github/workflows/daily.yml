@@ -30,11 +30,29 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            ranker/requirements.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # Ranker deps (torch/CLIP/MiniLM/CatBoost) so digest.mode: ranked works.
+          # Heavy (~1.5 GB) but pip-cached between runs. Remove this line to keep the
+          # cloud job on by_site (the agent falls back automatically without them).
+          pip install -r ranker/requirements.txt
+
+      # Cache the downloaded encoder weights (CLIP ViT-B/32 ~350 MB, MiniLM ~90 MB)
+      # so ranked runs don't re-download them every day.
+      - name: Cache ML model weights
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/clip
+          key: ml-encoder-weights-v1
 
       # Restore the dedup store from the dedicated state branch (if it exists yet),
       # so we only email genuinely NEW listings. State lives on `agent-state`, NOT
