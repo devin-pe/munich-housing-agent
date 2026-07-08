@@ -41,11 +41,67 @@ def is_student_only_text(*texts: str | None) -> bool:
     return any(_STUDENT_ONLY_RE.search(t) for t in texts if t)
 
 
+# Text indicating a women/Frauen-only listing. Tight enough not to match neutral
+# mentions ("close to Frauenkirche", "welcoming to women and men").
+_WOMEN_ONLY_RE = re.compile(
+    r"wom[ae]n\s+only"
+    r"|only\s+(?:for\s+)?wom[ae]n"
+    r"|for\s+wom[ae]n\s+only"
+    r"|females?\s+only"
+    r"|nur\s+(?:an\s+|f(?:ü|ue)r\s+)?frauen"    # "nur an/für Frauen", "nur Frauen"
+    r"|frauen\s+only"
+    r"|nur\s+weiblich",
+    re.I,
+)
+
+
+def is_women_only_text(*texts: str | None) -> bool:
+    """True if any text fragment signals a women/Frauen-only listing."""
+    return any(_WOMEN_ONLY_RE.search(t) for t in texts if t)
+
+
+# Blunt TITLE rules (per user request): drop if the title contains "student" in any
+# form, or "frauen" — except when "frauen" is part of a Munich place name
+# (Frauenkirche/Frauenplatz/Frauenstraße/…), which would be a false positive.
+_STUDENT_TITLE_RE = re.compile(r"student", re.I)
+_WOMEN_TITLE_RE = re.compile(
+    r"\bwomen\b|\bfemale\b|weiblich"
+    r"|frauen(?!kirche|platz|stra|str\.|tor|hof|chiemsee|insel|dorf|berg|feld)",
+    re.I,
+)
+
+
 def _is_student_only(listing: Listing) -> bool:
     if listing.extra.get("only_students"):
         return True
-    return is_student_only_text(listing.title, listing.extra.get("price_label"),
+    if _STUDENT_TITLE_RE.search(listing.title or ""):   # blunt: any "student*" in title
+        return True
+    # Careful phrasing check on richer text (e.g. Spacest descriptions), so a casual
+    # "great for students" in a description doesn't over-trigger.
+    return is_student_only_text(listing.extra.get("price_label"),
                                 listing.extra.get("student_text"))
+
+
+def _is_women_only(listing: Listing) -> bool:
+    if _WOMEN_TITLE_RE.search(listing.title or ""):
+        return True
+    return is_women_only_text(listing.extra.get("price_label"),
+                              listing.extra.get("student_text"))
+
+
+# Parking/garage listings (not apartments). Drop when the title is about a
+# garage/parking space AND does not mention a dwelling — so "Wohnung mit Garage"
+# (an apartment that merely has a garage) is kept.
+_PARKING_RE = re.compile(
+    r"garage|stellplatz|tiefgarage|parkplatz|carport|duplexparker|parking", re.I)
+_DWELLING_RE = re.compile(
+    r"wohnung|apartment|appartement|zimmer|studio|\bflat\b|maisonette|penthouse|loft|"
+    r"\bwg\b|\bhaus\b|\bhouse\b|home|residence", re.I)
+
+
+def _is_garage(listing: Listing) -> bool:
+    title = listing.title or ""
+    return bool(_PARKING_RE.search(title)) and not _DWELLING_RE.search(title)
 
 
 def compute_warm_price(listing: Listing, nebenkosten_estimate: float) -> None:
@@ -77,6 +133,8 @@ def apply_filters(listings: list[Listing], config: Config) -> tuple[list[Listing
         "dropped_furnished": 0,
         "dropped_no_price": 0,
         "dropped_student_only": 0,
+        "dropped_women_only": 0,
+        "dropped_garage": 0,
         "dropped_end_date": 0,
         "kept": 0,
     }
@@ -89,6 +147,16 @@ def apply_filters(listings: list[Listing], config: Config) -> tuple[list[Listing
         # (checks both the structured flag and student-only phrasing in the title).
         if _is_student_only(lg):
             stats["dropped_student_only"] += 1
+            continue
+
+        # Women/Frauen-only listings.
+        if _is_women_only(lg):
+            stats["dropped_women_only"] += 1
+            continue
+
+        # Garage / parking-space listings (not apartments).
+        if _is_garage(lg):
+            stats["dropped_garage"] += 1
             continue
 
         # Exclude fixed-term listings that end before the required date (short

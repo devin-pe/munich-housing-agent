@@ -32,7 +32,7 @@ import logging
 
 from selectolax.parser import HTMLParser
 
-from ..filters import is_student_only_text
+from ..filters import is_student_only_text, is_women_only_text
 from ..models import Listing
 from .base import BaseScraper
 
@@ -70,10 +70,11 @@ class SpacestScraper(BaseScraper):
     def _to_listing(self, item: dict, zimmer: int) -> Listing | None:
         if item.get("type") != TYPE_APARTMENT:   # skip shared rooms
             return None
-        # Skip student-only listings: the campus flag misses many (e.g. named
-        # "… Studenten" with "exclusively for students" only in the description),
+        # Skip student-only and women-only listings: the campus flag misses many
+        # (e.g. named "… Studenten" with the restriction only in the description),
         # so check the name + description text too.
-        if item.get("isCampus") or is_student_only_text(item.get("name"), item.get("description")):
+        name, desc = item.get("name"), item.get("description")
+        if item.get("isCampus") or is_student_only_text(name, desc) or is_women_only_text(name, desc):
             return None
         lid = item.get("id")
         if not lid:
