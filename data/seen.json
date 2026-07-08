@@ -1,0 +1,520 @@
+{
+ "housinganywhere:ut1149990": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Apartment in Schleißheimer Straße, Munich",
+  "url": "https://housinganywhere.com/room/ut1149990/de/Munich/schlei-heimer-stra-e?page=2",
+  "warm_price": 1425.0
+ },
+ "housinganywhere:ut1552247": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Apartment in Schleißheimer Straße, Munich",
+  "url": "https://housinganywhere.com/room/ut1552247/de/Munich/schlei-heimer-stra-e?page=2",
+  "warm_price": 1425.0
+ },
+ "housinganywhere:ut1603519": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Apartment in Schleißheimer Straße, Munich",
+  "url": "https://housinganywhere.com/room/ut1603519/de/Munich/schlei-heimer-stra-e?page=3",
+  "warm_price": 1490.0
+ },
+ "housinganywhere:ut1609665": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Studio in Aventinstraße, Munich",
+  "url": "https://housinganywhere.com/room/ut1609665/de/Munich/aventinstra-e?page=3",
+  "warm_price": 1490.0
+ },
+ "housinganywhere:ut1671065": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Studio in Aventinstraße, Munich",
+  "url": "https://housinganywhere.com/room/ut1671065/de/Munich/aventinstra-e?page=3",
+  "warm_price": 1490.0
+ },
+ "housinganywhere:ut1685006": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "Studio in Gneisenaustraße, Munich",
+  "url": "https://housinganywhere.com/room/ut1685006/de/Munich/gneisenaustra-e",
+  "warm_price": 1316.0
+ },
+ "housinganywhere:ut1719476": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "housinganywhere",
+  "title": "House in Tulpenstraße, Garching bei München",
+  "url": "https://housinganywhere.com/room/ut1719476/de/Garching%20bei%20M%C3%BCnchen/tulpenstra-e",
+  "warm_price": 1100.0
+ },
+ "kleinanzeigen:3433940322": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "kleinanzeigen",
+  "title": "Zimmer frei - ab sofort! WG",
+  "url": "https://www.kleinanzeigen.de/s-anzeige/zimmer-frei-ab-sofort-wg/3433940322-203-6471",
+  "warm_price": 1020.0
+ },
+ "kleinanzeigen:3449288666": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "kleinanzeigen",
+  "title": "vollmobiliert 1 Zimmer Wohnung Nähe U2 Milbertshofen",
+  "url": "https://www.kleinanzeigen.de/s-anzeige/vollmobiliert-1-zimmer-wohnung-naehe-u2-milbertshofen/3449288666-203-16377",
+  "warm_price": 1500.0
+ },
+ "kleinanzeigen:3453886770": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "kleinanzeigen",
+  "title": "Saniertes & Möbliertes 1-Zimmer-Apartment in Schwabing (30 m²)",
+  "url": "https://www.kleinanzeigen.de/s-anzeige/saniertes-moebliertes-1-zimmer-apartment-in-schwabing-30-m-/3453886770-203-6465",
+  "warm_price": 1350.0
+ },
+ "mrlodge:10407": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "1-room apartment for rent with great panoramic view now for 6-24 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-schwanthalerhoehe-10407",
+  "warm_price": 1350.0
+ },
+ "mrlodge:10494": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished rental near S-Bahn station Leuchtenbergring 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-berg-am-laim-10494",
+  "warm_price": 1140.0
+ },
+ "mrlodge:11073": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Nicely furnished apartment for rent at Arabellapark 15.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-arabellapark-11073",
+  "warm_price": 1500.0
+ },
+ "mrlodge:11210": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished ground-floor apartment in Moosach for rent 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-moosach-11210",
+  "warm_price": 1440.0
+ },
+ "mrlodge:12583": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Apartment with concierge service, near Olympic park 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-schwabing-west-12583",
+  "warm_price": 1300.0
+ },
+ "mrlodge:12660": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Prime location in the University quarter 12.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-maxvorstadt-12660",
+  "warm_price": 1190.0
+ },
+ "mrlodge:14399": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Moosach: Furnished apartment with balcony for rent now for 6-24 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-moosach-14399",
+  "warm_price": 1480.0
+ },
+ "mrlodge:14506": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Modern apartment for rent with bus connection 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-am-hart-14506",
+  "warm_price": 1300.0
+ },
+ "mrlodge:14533": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Haidhausen: apartment on the 6th floor for rent 01.08.2026 for 6-24 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-au-haidhausen-14533",
+  "warm_price": 1450.0
+ },
+ "mrlodge:14653": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished attic apartment in Giesing now for 6-12 months",
+  "url": "https://www.mrlodge.com/rent/2-zimmer-wohnung-muenchen-giesing-14653",
+  "warm_price": 1500.0
+ },
+ "mrlodge:14834": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Kompaktes Apartment in begehrter Lage nahe Nymphenburg 20.07.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-nymphenburg-14834",
+  "warm_price": 1250.0
+ },
+ "mrlodge:14906": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Fasanerie: mostly newly furnished 1-room apartment now for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-fasanerie-14906",
+  "warm_price": 1250.0
+ },
+ "mrlodge:14907": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Frisch saniertes Apartment mit Balkon im Herzen der Maxvorstadt now for 6-24 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-maxvorstadt-14907",
+  "warm_price": 1350.0
+ },
+ "mrlodge:2380": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Nicely furnished studio in Sendling-Westpark 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-sendling-westpark-2380",
+  "warm_price": 1250.0
+ },
+ "mrlodge:2619": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Apartment at the Luitpoldpark in Milbertshofen 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-milbertshofen-2619",
+  "warm_price": 1490.0
+ },
+ "mrlodge:4086": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Very charming apartment with modern kitchen 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-schwabing-4086",
+  "warm_price": 1490.0
+ },
+ "mrlodge:413": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished apartment for rent in the Olympic Village 15.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-olympiadorf-413",
+  "warm_price": 1300.0
+ },
+ "mrlodge:5677": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Bright and fully furnished apartment for rent 01.09.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-giesing-5677",
+  "warm_price": 1500.0
+ },
+ "mrlodge:5936": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Charming 1-room apartment in trendy Glockenbachviertel 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-glockenbachviertel-5936",
+  "warm_price": 1450.0
+ },
+ "mrlodge:6061": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished apartment in Milbertshofen now for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-milbertshofen-6061",
+  "warm_price": 1350.0
+ },
+ "mrlodge:8358": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Bright and modern studio apartment with balcony 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-schwabing-8358",
+  "warm_price": 1390.0
+ },
+ "mrlodge:8924": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Munich-Maxvorstadt: stylish 1-room apartment near University now for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-maxvorstadt-8924",
+  "warm_price": 1380.0
+ },
+ "mrlodge:9290": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Furnished apartment at the Olympiapark with balcony 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-schwabing-9290",
+  "warm_price": 1380.0
+ },
+ "mrlodge:9781": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Apartment with a view of the Olympic Tower 01.08.2026 for 6-36 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-olympiadorf-9781",
+  "warm_price": 1400.0
+ },
+ "mrlodge:9913": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "mrlodge",
+  "title": "Generous apartment for rent in the Obergiesing district now for 6-24 months",
+  "url": "https://www.mrlodge.com/rent/1-zimmer-wohnung-muenchen-giesing-9913",
+  "warm_price": 1480.0
+ },
+ "spacest:207523": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "spacest",
+  "title": "Wohnung möbliert in Oettingenstraße, München für 34 m²",
+  "url": "https://spacest.com/rent-listing/207523",
+  "warm_price": 1250.0
+ },
+ "spacest:211957": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "spacest",
+  "title": "Business Single Studenten",
+  "url": "https://spacest.com/rent-listing/211957",
+  "warm_price": 1457.0
+ },
+ "spacest:240958": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "spacest",
+  "title": "Spacest apartment",
+  "url": "https://spacest.com/rent-listing/240958",
+  "warm_price": 1275.0
+ },
+ "wggesucht:11132601": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Geteiltes Zimmer in der Nähe Bahnhof Alte Heide U6",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.11132601.html",
+  "warm_price": 890.0
+ },
+ "wggesucht:12282554": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Schleißheimer Straße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.12282554.html",
+  "warm_price": 1425.0
+ },
+ "wggesucht:12459730": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Central and furnished flat in Schwabing near University",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.12459730.html",
+  "warm_price": 1360.0
+ },
+ "wggesucht:12657400": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Furnished Student Apartment with garden in city center from 01.08.2026",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Ludwigsvorstadt-Isarvorstadt.12657400.html",
+  "warm_price": 1290.0
+ },
+ "wggesucht:12895313": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Lerchenauer Straße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen.90.1.1.0.html?asset_id=12895313&pu=26270888&sort_column=1&sort_order=0",
+  "warm_price": 850.0
+ },
+ "wggesucht:12896079": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Königsteinstraße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.12896079.html",
+  "warm_price": 1340.0
+ },
+ "wggesucht:13407717": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Wunderschönes WG-Zimmer in Frauen WG",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Berg-am-Laim.13407717.html",
+  "warm_price": 1190.0
+ },
+ "wggesucht:13438145": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Möbliertes Zimmer in stilvoller, vollausgestatteter Wohnung",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen.90.1.1.0.html?asset_id=13438145&pu=22446810&sort_column=1&sort_order=0",
+  "warm_price": 1060.0
+ },
+ "wggesucht:13456631": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Wundervolle Wohnung auf Zeit am Luitpoldpark mit Balkon",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.13456631.html",
+  "warm_price": 1125.0
+ },
+ "wggesucht:13483213": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Ruhiges und gemütliches Zuhause im Herzen von München",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.13483213.html",
+  "warm_price": 1095.0
+ },
+ "wggesucht:13611622": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Voll möblierte 1-Zimmer-Wohnung mit U-Bahn-Anschluss in Top-Lage",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Muenchen.13611622.html",
+  "warm_price": 1490.0
+ },
+ "wggesucht:13643448": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Lerchenauer Straße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.13643448.html",
+  "warm_price": 940.0
+ },
+ "wggesucht:13643449": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Lerchenauer Straße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Schwabing-West.13643449.html",
+  "warm_price": 880.0
+ },
+ "wggesucht:13646521": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Drygalski-Allee, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen.13646521.html",
+  "warm_price": 1500.0
+ },
+ "wggesucht:13648242": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Schleißheimer Straße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Maxvorstadt.13648242.html",
+  "warm_price": 1425.0
+ },
+ "wggesucht:13648476": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Buchnerstraße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Berg-am-Laim.13648476.html",
+  "warm_price": 1500.0
+ },
+ "wggesucht:13704958": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Neuherbergstraße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen.13704958.html",
+  "warm_price": 1500.0
+ },
+ "wggesucht:13709123": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Helle Terrassewohnung am Westpark – ruhig & voll möbliert",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Mittersendling.13709123.html",
+  "warm_price": 1096.0
+ },
+ "wggesucht:13738952": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Garage for Rent in Graf Konrad Str 25, 80809 available from 01. August 2026",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Graf-Konrad-Str-25-80809.13738952.html",
+  "warm_price": 60.0
+ },
+ "wggesucht:13739190": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Klenzestraße, Munich",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Altstadt-Lehel.13739190.html",
+  "warm_price": 1400.0
+ },
+ "wggesucht:13739596": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "Kleine ruhige 1-Zimmer Wohnung (separate Küche)",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Sendling-Westpark.13739596.html",
+  "warm_price": 1050.0
+ },
+ "wggesucht:8512967": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wggesucht",
+  "title": "THE FIZZ München – Voll möblierte Ferienwohnungen für Studierende",
+  "url": "https://www.wg-gesucht.de/1-zimmer-wohnungen-in-Muenchen-Neuhausen-Nymphenburg.8512967.html",
+  "warm_price": 1395.0
+ },
+ "wunderflats:5f3a74ded5c3900008e31b5c": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "comfortable studio flat in Schwabing with balcony",
+  "url": "https://wunderflats.com/en/furnished-apartment/comfortable-studio-flat-in-schwabing-with-balcony/5f3a74ded5c3900008e31b5c",
+  "warm_price": 1490.0
+ },
+ "wunderflats:5f9285486ee69d00063a8e87": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Beautiful 2 room flat, all inclusive with perfect transport connections",
+  "url": "https://wunderflats.com/en/furnished-apartment/beautiful-2-room-flat-all-inclusive-with-perfect-transport-connections/5f9285486ee69d00063a8e87",
+  "warm_price": 1450.0
+ },
+ "wunderflats:5fc8f895f07804000673490a": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Pretty studio in München",
+  "url": "https://wunderflats.com/en/furnished-apartment/pretty-studio-in-munchen/5fc8f895f07804000673490a",
+  "warm_price": 980.0
+ },
+ "wunderflats:615af5afa8e9ba000a530e55": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Charming, quiet apartment in München",
+  "url": "https://wunderflats.com/en/furnished-apartment/charming-quiet-apartment-in-munchen/615af5afa8e9ba000a530e55",
+  "warm_price": 1450.0
+ },
+ "wunderflats:62f67b7107fce79b403cb94f": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Quiet and bright sous-terrain apartment near the S8 train and the fair",
+  "url": "https://wunderflats.com/en/furnished-apartment/quiet-and-bright-sous-terrain-apartment-near-the-s8-train-and-the-fair/62f67b7107fce79b403cb94f",
+  "warm_price": 1349.0
+ },
+ "wunderflats:635e6466070c80c6ee2178b3": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Furnished apartment in Neuhausen-Schwabing with view to Olympiaturm",
+  "url": "https://wunderflats.com/en/furnished-apartment/furnished-apartment-in-neuhausen-schwabing-with-view-to-olympiaturm/635e6466070c80c6ee2178b3",
+  "warm_price": 1050.0
+ },
+ "wunderflats:68270d858af3ef4046e8a43b": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Awesome and great apartment located in München",
+  "url": "https://wunderflats.com/en/furnished-apartment/awesome-and-great-apartment-located-in-munchen/68270d858af3ef4046e8a43b",
+  "warm_price": 1500.0
+ },
+ "wunderflats:6859663434d5f2fa89da4e06": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Fully Furnished Room in Designer Flat - Top Location - only for weekend commuters",
+  "url": "https://wunderflats.com/en/furnished-apartment/fully-furnished-room-in-designer-flat-top-location-only-for-weekend-commuters/6859663434d5f2fa89da4e06",
+  "warm_price": 1000.0
+ },
+ "wunderflats:6896f9d74a7f7518716a6df8": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Charming Fully-Furnished 1‑Room Apartment with Sleeping Nook – 32 m², Fantastic Location, Munich",
+  "url": "https://wunderflats.com/en/furnished-apartment/charming-fully-furnished-1room-apartment-with-sleeping-nook-32-m2-fantastic-location-munich/6896f9d74a7f7518716a6df8",
+  "warm_price": 1500.0
+ },
+ "wunderflats:6925cc5e6d22bf84a3a8aae6": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Awesome studio located in München",
+  "url": "https://wunderflats.com/en/furnished-apartment/awesome-studio-located-in-munchen/6925cc5e6d22bf84a3a8aae6",
+  "warm_price": 1430.0
+ },
+ "wunderflats:69600bf67ff9be99d3f291f3": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Neat and spacious home in München-Bogenhausen",
+  "url": "https://wunderflats.com/en/furnished-apartment/neat-and-spacious-home-in-munchen-bogenhausen/69600bf67ff9be99d3f291f3",
+  "warm_price": 1449.0
+ },
+ "wunderflats:696ce8e6a7790b033c2f65fb": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Bright studio apartment on Simbacherstraße, just a short walk from Ostbahnhof.",
+  "url": "https://wunderflats.com/en/furnished-apartment/bright-studio-apartment-on-simbacherstrae-just-a-short-walk-from-ostbahnhof/696ce8e6a7790b033c2f65fb",
+  "warm_price": 1500.0
+ },
+ "wunderflats:6a0749af210ce8dd21a2137c": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Fully furnished in Munich-Neuperlach - ideal for professionals",
+  "url": "https://wunderflats.com/en/furnished-apartment/fully-furnished-in-munich-neuperlach-ideal-for-professionals/6a0749af210ce8dd21a2137c",
+  "warm_price": 1199.0
+ },
+ "wunderflats:6a3eb4b402c9f290fe34ceed": {
+  "first_seen": "2026-07-08T11:49:09.824894+00:00",
+  "source": "wunderflats",
+  "title": "Bright & nice suite in München",
+  "url": "https://wunderflats.com/en/furnished-apartment/bright-nice-suite-in-munchen/6a3eb4b402c9f290fe34ceed",
+  "warm_price": 1490.0
+ }
+}
