@@ -1,0 +1,23 @@
+# Offline ranker pipeline (CPU-only). Heavy ML deps — kept separate from the daily
+# agent so its `by_site` digest mode runs without any of this installed.
+#
+# Install:  python -m pip install -r ranker/requirements.txt
+# (Also needs the daily agent's deps for snapshot's Mr. Lodge price lookup: httpx,
+#  selectolax, PyYAML, python-dotenv.)
+
+# Snapshot
+httpx==0.27.2
+selectolax==0.3.27
+
+# Feature extraction (frozen encoders, inference-only)
+torch==2.12.1                 # CPU wheel (Python 3.14)
+open-clip-torch==3.3.0        # CLIP ViT-B/32 for images + LAION aesthetic head
+sentence-transformers==5.6.0  # all-MiniLM-L6-v2 for descriptions
+pillow>=10.0                  # image loading
+numpy>=2.0
+pandas>=2.0
+
+# Training
+scikit-learn==1.9.0           # PCA, scaling, logistic regression, CV
+catboost==1.2.10              # secondary model
+joblib>=1.3                   # persist the fitted pipeline

@@ -71,6 +71,12 @@ def run(config: Config, dry_run: bool = False) -> int:
     store = SeenStore(config.runtime.data_dir)
     new_listings = store.filter_new(listings)
 
+    # 3b. Optional ranking (digest.mode: ranked). Falls back to by_site if the
+    # offline scorer isn't available — and by_site never imports the ML pipeline.
+    mode = config.digest.mode
+    if mode == "ranked" and new_listings:
+        mode = _rank_listings(new_listings)
+
     # 4. Email
     if not new_listings and not config.email.send_when_empty:
         logger.info("No new listings and send_when_empty=false — not sending.")
@@ -78,26 +84,69 @@ def run(config: Config, dry_run: bool = False) -> int:
         return 0
 
     if dry_run:
-        _write_preview(config, new_listings, failed_sources)
+        _write_preview(config, new_listings, failed_sources, mode)
         store.close()
         return 0
 
     emailer = Emailer(config)
-    ok = emailer.send(new_listings, failed_sources)
+    ok = emailer.send(new_listings, failed_sources, mode=mode)
     if ok:
         store.mark_sent(new_listings)   # record ONLY after a successful send
     store.close()
     return 0 if ok else 1
 
 
-def _write_preview(config: Config, listings: list[Listing], failed_sources: list[str]) -> None:
+def _rank_listings(listings: list[Listing]) -> str:
+    """Score each listing with the offline ranker and sort best-first (in place).
+    Returns the effective digest mode: 'ranked' on success, else 'by_site'.
+
+    Each survivor is enriched from its detail page (description + photos) so the
+    ranker scores on real image/text features rather than median-imputing them.
+    """
+    try:
+        from ranker.score import score_listing, scorer_available
+        from ranker.enrich import enrich_listing
+    except Exception as exc:
+        logger.warning("ranked mode: ranker not importable (%s) — using by_site", exc)
+        return "by_site"
+    if not scorer_available():
+        logger.warning("ranked mode: models/scorer.joblib missing — using by_site "
+                       "(run `python -m ranker.train`)")
+        return "by_site"
+
+    scored = enriched = 0
+    for lg in listings:
+        rec = {"warm_price_eur": lg.warm_price_eur, "price_eur": lg.price_eur,
+               "area_sqm": lg.area_sqm, "lat": lg.lat, "lng": lg.lng,
+               "address_or_area": lg.address_or_area}
+        try:                                    # detail-page description + images
+            extra = enrich_listing(lg.url, lg.source)
+            if extra.get("image_urls") or extra.get("description"):
+                enriched += 1
+            rec.update(extra)
+        except Exception as exc:
+            logger.debug("enrich failed for %s (%s)", lg.dedup_key(), exc)
+        try:
+            lg.extra["score"] = round(float(score_listing(rec)), 4)
+            scored += 1
+        except Exception as exc:
+            logger.warning("scoring failed for %s (%s)", lg.dedup_key(), exc)
+            lg.extra["score"] = 0.0
+    listings.sort(key=lambda l: l.extra.get("score", 0.0), reverse=True)
+    logger.info("Ranked %d/%d listings by P(good) (%d enriched from detail pages)",
+                scored, len(listings), enriched)
+    return "ranked"
+
+
+def _write_preview(config: Config, listings: list[Listing], failed_sources: list[str],
+                   mode: str = "by_site") -> None:
     """Dry-run: render the digest to files instead of sending."""
     from pathlib import Path
     from .emailer import render_html, render_plaintext
 
     out_dir = Path(config.runtime.data_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / "digest_preview.html").write_text(render_html(listings, failed_sources), encoding="utf-8")
-    (out_dir / "digest_preview.txt").write_text(render_plaintext(listings, failed_sources), encoding="utf-8")
+    (out_dir / "digest_preview.html").write_text(render_html(listings, failed_sources, mode), encoding="utf-8")
+    (out_dir / "digest_preview.txt").write_text(render_plaintext(listings, failed_sources, mode), encoding="utf-8")
     logger.info("[dry-run] Wrote %d listings to %s/digest_preview.{html,txt} (no email sent)",
                 len(listings), out_dir)

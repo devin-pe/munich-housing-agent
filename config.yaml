@@ -94,6 +94,16 @@ commute:
   # Cache geocode + route lookups this many days to minimise paid API calls.
   cache_ttl_days: 30
 
+digest:
+  # by_site (default): listings grouped by source, unranked, in each site's own
+  #   order. The ML scorer is NOT used — runs even if ranker/models/scorer.joblib
+  #   and the ML deps are absent.
+  # ranked: all surviving listings pooled across sites, scored with the offline
+  #   ranker (P good) and sorted best-first, score shown per entry. Requires
+  #   ranker/requirements.txt installed + models/scorer.joblib; if the model is
+  #   missing or fails to load, it logs a warning and falls back to by_site.
+  mode: ranked
+
 email:
   transport: resend              # resend | smtp
   recipient: "devpereira1@gmail.com"   # Resend test mode only delivers to the Resend account address

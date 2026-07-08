@@ -1,11 +1,17 @@
 # Secrets
 .env
 
-# Runtime data (dedup store, geocode/route caches, logs, digest previews).
-# In CI the dedup state (data/seen.json) is persisted on a separate `agent-state`
-# git branch by the workflow — not tracked on main — so main stays clean.
-data/
+# Runtime data (dedup store, geocode/route caches, logs, digest previews) and the
+# ranker's snapshot cache (images, embeddings, manifest, features.csv) — all
+# regenerable. But DO track the ranker's label inputs so training is reproducible.
+# (Dedup state lives on a separate `agent-state` branch, keeping main clean.)
+data/*
+!data/positives.txt
+!data/negatives.txt
 *.log
+
+# ML training artifacts
+catboost_info/
 
 # Python
 __pycache__/

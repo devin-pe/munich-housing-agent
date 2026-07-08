@@ -146,6 +146,19 @@ in `config.yaml`; note that WG-Gesucht and Kleinanzeigen key cities by numeric I
 so a new city needs one entry added to the `CITY_IDS` / `CITY_CODES` map in those
 scrapers.
 
+## Optional: ranked digest (ML)
+
+`config.yaml → digest.mode` controls the digest:
+- **`by_site`** (default) — listings grouped by source, unranked. Needs none of the
+  ML pipeline; the daily agent runs exactly as described above.
+- **`ranked`** — surviving listings are pooled and sorted best-first by a small
+  offline classifier's P(good), score shown per entry. Requires the ranker (see
+  [`ranker/README.md`](ranker/README.md)) trained to `models/scorer.joblib`; if the
+  model is missing/unloadable it logs a warning and falls back to `by_site`.
+
+The ranker is a separate, optional subsystem (`ranker/`) with its own heavy deps —
+it never affects the default `by_site` path.
+
 ### Adding another site
 
 Subclass `BaseScraper` in `housing_agent/scrapers/`, return normalized `Listing`

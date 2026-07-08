@@ -63,10 +63,30 @@ def _commute_known(listings: list[Listing]) -> bool:
     return any(lg.commute_minutes is not None for lg in listings)
 
 
-def render_plaintext(listings: list[Listing], failed_sources: list[str]) -> str:
+def _score(lg: Listing):
+    return lg.extra.get("score") if isinstance(lg.extra, dict) else None
+
+
+def render_plaintext(listings: list[Listing], failed_sources: list[str], mode: str = "by_site") -> str:
     scope = "within commute range" if _commute_known(listings) else "matching your criteria"
     lines = [f"Munich furnished rentals — {date.today().isoformat()}",
              f"{len(listings)} new listing(s) {scope}.", ""]
+
+    if mode == "ranked":
+        lines.append("Ranked best-first by predicted fit (P good).\n")
+        for i, lg in enumerate(listings, 1):   # already sorted by the pipeline
+            sc = _score(lg)
+            rooms = f"{lg.rooms:g} Zi" if lg.rooms is not None else "? Zi"
+            area = f"{lg.area_sqm:g} m²" if lg.area_sqm else ""
+            tag = f"[{sc:.0%}] " if isinstance(sc, (int, float)) else ""
+            lines.append(f"{i}. {tag}{lg.title}")
+            lines.append(f"    {_fmt_price(lg)} | {rooms} {area} | "
+                         f"{SOURCE_LABELS.get(lg.source, lg.source)} | {_fmt_commute(lg)}")
+            lines.append(f"    {lg.address_or_area}")
+            lines.append(f"    {lg.url}")
+        if failed_sources:
+            lines.append("\nSources that failed today (skipped): " + ", ".join(failed_sources))
+        return "\n".join(lines)
     for source, items in _group_by_source(listings).items():
         lines.append(f"== {SOURCE_LABELS.get(source, source)} ({len(items)}) ==")
         for lg in items:
@@ -83,9 +103,51 @@ def render_plaintext(listings: list[Listing], failed_sources: list[str]) -> str:
     return "\n".join(lines)
 
 
-def render_html(listings: list[Listing], failed_sources: list[str]) -> str:
+def _render_html_ranked(listings: list[Listing], failed_sources: list[str], esc) -> str:
+    rows = []
+    for i, lg in enumerate(listings, 1):   # already sorted best-first by the pipeline
+        sc = _score(lg)
+        badge = (f'<span style="background:#1d4ed8;color:#fff;border-radius:10px;'
+                 f'padding:1px 8px;font-size:12px;font-weight:700">{sc:.0%}</span>'
+                 if isinstance(sc, (int, float)) else "")
+        area = f" · {lg.area_sqm:g} m²" if lg.area_sqm else ""
+        rooms = f"{lg.rooms:g} Zi" if lg.rooms is not None else "? Zi"
+        commute = (f'{lg.commute_minutes} min' if lg.commute_minutes is not None else "commute ?")
+        price = f"€{lg.warm_price_eur:,.0f}/mo" if lg.warm_price_eur is not None else "price n/a"
+        est = ' <span style="color:#b45309;font-size:12px">(est.)</span>' if lg.price_is_estimated else ""
+        rows.append(f"""
+          <tr><td style="padding:14px 0;border-bottom:1px solid #eee">
+            <div style="color:#6b7280;font-size:13px">#{i} &nbsp; {badge}</div>
+            <a href="{esc(lg.url)}" style="font-size:16px;font-weight:600;color:#1d4ed8;text-decoration:none">{esc(lg.title)}</a>
+            <div style="margin-top:4px;color:#111;font-size:15px">
+              <b>{price}</b> warm{est} &nbsp;·&nbsp; {esc(rooms)}{area}
+              &nbsp;·&nbsp; {esc(SOURCE_LABELS.get(lg.source, lg.source))}
+              &nbsp;·&nbsp; <span style="color:#047857;font-weight:600">{commute}</span>
+            </div>
+            <div style="margin-top:2px;color:#6b7280;font-size:13px">{esc(lg.address_or_area)}</div>
+          </td></tr>""")
+    footer = ""
+    if failed_sources:
+        footer = (f'<p style="margin-top:24px;padding:10px 12px;background:#fef2f2;'
+                  f'border-radius:6px;color:#991b1b;font-size:13px">⚠️ Sources that failed today: '
+                  f'{esc(", ".join(failed_sources))}</p>')
+    return f"""
+    <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:640px;margin:0 auto;color:#111">
+      <h1 style="font-size:20px;margin:0 0 2px">🏠 Munich furnished rentals — ranked</h1>
+      <div style="color:#6b7280;font-size:14px">{date.today().isoformat()} · {len(listings)} new listing(s), best-first by predicted fit</div>
+      <table width="100%" cellpadding="0" cellspacing="0">{''.join(rows)}</table>
+      {footer}
+      <p style="margin-top:28px;color:#9ca3af;font-size:12px">The % is the ranker's P(good).
+      Prices marked "est." derive Warmmiete from Kaltmiete + assumed Nebenkosten.</p>
+    </div>"""
+
+
+def render_html(listings: list[Listing], failed_sources: list[str], mode: str = "by_site") -> str:
     def esc(x) -> str:
         return html.escape(str(x)) if x is not None else ""
+
+    if mode == "ranked":
+        return _render_html_ranked(listings, failed_sources, esc)
 
     cards = []
     for source, items in _group_by_source(listings).items():
@@ -145,10 +207,10 @@ class Emailer:
     def build_subject(self, n: int) -> str:
         return f"{self.config.email.subject_prefix}: {n} new ({date.today().isoformat()})"
 
-    def send(self, listings: list[Listing], failed_sources: list[str]) -> bool:
+    def send(self, listings: list[Listing], failed_sources: list[str], mode: str = "by_site") -> bool:
         subject = self.build_subject(len(listings))
-        text = render_plaintext(listings, failed_sources)
-        html_body = render_html(listings, failed_sources)
+        text = render_plaintext(listings, failed_sources, mode)
+        html_body = render_html(listings, failed_sources, mode)
         transport = self.config.email.transport
         try:
             if transport == "smtp":

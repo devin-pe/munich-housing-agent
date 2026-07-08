@@ -59,6 +59,11 @@ class EmailConfig:
 
 
 @dataclass
+class DigestConfig:
+    mode: str            # by_site | ranked
+
+
+@dataclass
 class RuntimeConfig:
     request_delay_seconds: float
     request_timeout_seconds: float
@@ -84,6 +89,7 @@ class Config:
     commute: CommuteConfig
     email: EmailConfig
     runtime: RuntimeConfig
+    digest: DigestConfig
     secrets: Secrets = field(default_factory=Secrets)
 
     def enabled_sources(self) -> list[SourceConfig]:
@@ -167,11 +173,15 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         log_level=str(r.get("log_level", "INFO")),
     )
 
+    d = raw.get("digest", {})
+    digest = DigestConfig(mode=str(d.get("mode", "by_site")))
+
     return Config(
         search=search,
         sources=sources,
         commute=commute,
         email=email,
         runtime=runtime,
+        digest=digest,
         secrets=_load_secrets(),
     )
