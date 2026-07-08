@@ -2,12 +2,16 @@ name: Daily Munich housing digest
 
 # Runs once per day in the cloud (no need for your machine to be on).
 #
-# NOTE on time: GitHub Actions cron is in UTC. 10:00 UTC = 12:00 Europe/Berlin
-# during summer time (CEST, ~late Mar–late Oct). In winter (CET) it would be 11:00
-# local; change the cron to "0 11 * * *" if you still run it past October.
+# NOTE on time: GitHub Actions cron is in UTC. 10:07 UTC ≈ 12:07 Europe/Berlin
+# during summer (CEST, ~late Mar–late Oct); 11:07 local in winter (CET) — change to
+# "7 11 * * *" if you run it past October.
+# We deliberately avoid the top of the hour (:00): GitHub heavily delays and
+# sometimes DROPS scheduled runs at round times under load. An off-peak minute like
+# :07 is far more reliable. Scheduled runs are still best-effort (can be minutes
+# late); use "Run workflow" for an immediate digest.
 on:
   schedule:
-    - cron: "0 10 * * *"    # 10:00 UTC = 12:00 (noon) Europe/Berlin during summer
+    - cron: "7 10 * * *"     # 10:07 UTC ≈ 12:07 Europe/Berlin during summer
   workflow_dispatch: {}      # allow manual "Run workflow" from the Actions tab
 
 # Needed so the job can push the dedup state to the `agent-state` branch.
