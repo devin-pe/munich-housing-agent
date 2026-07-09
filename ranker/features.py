@@ -37,8 +37,8 @@ PIPELINE = MODELS / "feature_pipeline.joblib"
 
 WALK_M_PER_MIN = 80.0        # ≈4.8 km/h
 METRO_SEARCH_RADIUS_M = 1500
-FEATURE_COLS = ["metro_walk_min", "price_per_m2", "price_eur", "aesthetic_score",
-                "desc_pca_0", "desc_pca_1"]
+FEATURE_COLS = ["metro_walk_min", "walk_to_office_min", "price_per_m2", "price_eur",
+                "aesthetic_score", "desc_pca_0", "desc_pca_1"]
 
 
 # ── lazy encoders (loaded once) ──────────────────────────────────────────────
@@ -161,6 +161,14 @@ def _haversine_m(a, b) -> float:
     return 2 * R * math.asin(math.sqrt(h))
 
 
+def walk_to_office_min(latlng, anchor) -> float | None:
+    """Straight-line walking minutes from the listing to the office anchor — a
+    proximity-to-work signal distinct from walk-to-nearest-transit-stop."""
+    if not latlng or not anchor or anchor[0] is None:
+        return None
+    return round(_haversine_m(latlng, anchor) / WALK_M_PER_MIN, 1)
+
+
 def metro_walk_min(latlng, cache: dict) -> float | None:
     if not latlng:
         return None
@@ -212,7 +220,9 @@ def main() -> int:
     rows = [r for r in rows if r["fetch_status"] in ("ok", "manual")]
     print(f"Building features for {len(rows)} listings...")
 
-    geocoder = Geocoder(load_config())
+    cfg = load_config()
+    geocoder = Geocoder(cfg)
+    anchor = (cfg.search.anchor_lat, cfg.search.anchor_lng)
     metro_cache = _load_json(METRO_CACHE)
 
     recs, text_vecs = [], []
@@ -229,9 +239,10 @@ def main() -> int:
         # location
         latlng = geocoder.geocode(r.get("address") or "") if r.get("address") else None
         metro = metro_walk_min(latlng, metro_cache)
+        walk = walk_to_office_min(latlng, anchor)
         recs.append({"listing_id": lid, "label": r["label"], "site": r["site"],
-                     "metro_walk_min": metro, "price_per_m2": ppm, "price_eur": price,
-                     "aesthetic_score": aes})
+                     "metro_walk_min": metro, "walk_to_office_min": walk,
+                     "price_per_m2": ppm, "price_eur": price, "aesthetic_score": aes})
         print(f"[{i:>3}/{len(rows)}] {r['site']:>14} metro={metro} ppm={ppm} aes={round(aes,2) if aes else None}")
     geocoder.save()
 

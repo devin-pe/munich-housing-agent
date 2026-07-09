@@ -48,25 +48,36 @@ def _load_artifact():
 _METRO_CACHE = None
 
 
-def _metro(rec):
+def _latlng(rec):
+    """Listing coordinates: from the record if present, else geocode its address."""
+    lat, lng = _get(rec, "lat"), _get(rec, "lng")
+    if lat is not None and lng is not None:
+        return (lat, lng)
+    addr = _get(rec, "address_or_area", "address")
+    if not addr:
+        return None
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from housing_agent.config import load_config
+    from housing_agent.geocode import Geocoder
+    return Geocoder(load_config()).geocode(addr)
+
+
+def _metro(rec, latlng):
     global _METRO_CACHE
     from .features import metro_walk_min, METRO_CACHE, _load_json
     if _METRO_CACHE is None:                     # load persistent cache once and reuse
-        _METRO_CACHE = _load_json(METRO_CACHE)   # (a fresh {} per call re-queried Overpass every time)
-    lat, lng = _get(rec, "lat"), _get(rec, "lng")
-    if lat is None or lng is None:
-        addr = _get(rec, "address_or_area", "address")
-        if not addr:
-            return None
-        import sys
-        sys.path.insert(0, str(ROOT))
-        from housing_agent.config import load_config
-        from housing_agent.geocode import Geocoder
-        coords = Geocoder(load_config()).geocode(addr)
-        if not coords:
-            return None
-        lat, lng = coords
-    return metro_walk_min((lat, lng), _METRO_CACHE)   # shared persistent cache
+        _METRO_CACHE = _load_json(METRO_CACHE)
+    return metro_walk_min(latlng, _METRO_CACHE) if latlng else None
+
+
+def _walk_to_office(latlng):
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from housing_agent.config import load_config
+    from .features import walk_to_office_min
+    cfg = load_config()
+    return walk_to_office_min(latlng, (cfg.search.anchor_lat, cfg.search.anchor_lng))
 
 
 def _aesthetic(rec):
@@ -125,8 +136,10 @@ def score_listing(rec) -> float:
     size = _get(rec, "area_sqm", "size_m2")
     ppm = round(price / size, 2) if (price and size) else None
 
+    latlng = _safe(_latlng, rec)                 # resolve coordinates once
     feats = {
-        "metro_walk_min": _safe(_metro, rec),
+        "metro_walk_min": _safe(lambda r: _metro(r, latlng), rec),
+        "walk_to_office_min": _safe(lambda r: _walk_to_office(latlng), rec),
         "price_per_m2": ppm,
         "price_eur": price,
         "aesthetic_score": _safe(_aesthetic, rec),

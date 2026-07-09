@@ -103,6 +103,11 @@ digest:
   #   ranker/requirements.txt installed + models/scorer.joblib; if the model is
   #   missing or fails to load, it logs a warning and falls back to by_site.
   mode: ranked
+  # ranked only: final order blends the model's P(good) with proximity to the
+  # office —  score = (1 − w)·P(good) + w·closeness_to_office  — so nearer places
+  # rank higher than the model alone would put them. 0 = pure model, 1 = pure
+  # proximity. Raise it if you want walking distance to dominate the ordering.
+  rank_walk_weight: 0.4
 
 email:
   transport: resend              # resend | smtp

@@ -67,21 +67,26 @@ def _score(lg: Listing):
     return lg.extra.get("score") if isinstance(lg.extra, dict) else None
 
 
+def _fmt_walk(lg: Listing) -> str:
+    w = lg.extra.get("walk_office_min") if isinstance(lg.extra, dict) else None
+    return f" | {w:g} min walk to office" if isinstance(w, (int, float)) else ""
+
+
 def render_plaintext(listings: list[Listing], failed_sources: list[str], mode: str = "by_site") -> str:
     scope = "within commute range" if _commute_known(listings) else "matching your criteria"
     lines = [f"Munich furnished rentals — {date.today().isoformat()}",
              f"{len(listings)} new listing(s) {scope}.", ""]
 
     if mode == "ranked":
-        lines.append("Ranked best-first by predicted fit (P good).\n")
+        lines.append("Ranked best-first by fit (model P(good) blended with office proximity).\n")
         for i, lg in enumerate(listings, 1):   # already sorted by the pipeline
             sc = _score(lg)
             rooms = f"{lg.rooms:g} Zi" if lg.rooms is not None else "? Zi"
             area = f"{lg.area_sqm:g} m²" if lg.area_sqm else ""
-            tag = f"[{sc:.0%}] " if isinstance(sc, (int, float)) else ""
+            tag = f"[fit {sc:.0%}] " if isinstance(sc, (int, float)) else ""
             lines.append(f"{i}. {tag}{lg.title}")
             lines.append(f"    {_fmt_price(lg)} | {rooms} {area} | "
-                         f"{SOURCE_LABELS.get(lg.source, lg.source)} | {_fmt_commute(lg)}")
+                         f"{SOURCE_LABELS.get(lg.source, lg.source)} | {_fmt_commute(lg)}{_fmt_walk(lg)}")
             lines.append(f"    {lg.address_or_area}")
             lines.append(f"    {lg.url}")
         if failed_sources:
@@ -112,7 +117,10 @@ def _render_html_ranked(listings: list[Listing], failed_sources: list[str], esc)
                  if isinstance(sc, (int, float)) else "")
         area = f" · {lg.area_sqm:g} m²" if lg.area_sqm else ""
         rooms = f"{lg.rooms:g} Zi" if lg.rooms is not None else "? Zi"
-        commute = (f'{lg.commute_minutes} min' if lg.commute_minutes is not None else "commute ?")
+        commute = (f'{lg.commute_minutes} min transit' if lg.commute_minutes is not None else "commute ?")
+        walk = lg.extra.get("walk_office_min") if isinstance(lg.extra, dict) else None
+        walk_html = (f'&nbsp;·&nbsp; <span style="color:#047857">{walk:g} min walk to office</span>'
+                     if isinstance(walk, (int, float)) else "")
         price = f"€{lg.warm_price_eur:,.0f}/mo" if lg.warm_price_eur is not None else "price n/a"
         est = ' <span style="color:#b45309;font-size:12px">(est.)</span>' if lg.price_is_estimated else ""
         rows.append(f"""
@@ -122,7 +130,7 @@ def _render_html_ranked(listings: list[Listing], failed_sources: list[str], esc)
             <div style="margin-top:4px;color:#111;font-size:15px">
               <b>{price}</b> warm{est} &nbsp;·&nbsp; {esc(rooms)}{area}
               &nbsp;·&nbsp; {esc(SOURCE_LABELS.get(lg.source, lg.source))}
-              &nbsp;·&nbsp; <span style="color:#047857;font-weight:600">{commute}</span>
+              &nbsp;·&nbsp; <span style="color:#047857;font-weight:600">{commute}</span>{walk_html}
             </div>
             <div style="margin-top:2px;color:#6b7280;font-size:13px">{esc(lg.address_or_area)}</div>
           </td></tr>""")
@@ -137,7 +145,8 @@ def _render_html_ranked(listings: list[Listing], failed_sources: list[str], esc)
       <div style="color:#6b7280;font-size:14px">{date.today().isoformat()} · {len(listings)} new listing(s), best-first by predicted fit</div>
       <table width="100%" cellpadding="0" cellspacing="0">{''.join(rows)}</table>
       {footer}
-      <p style="margin-top:28px;color:#9ca3af;font-size:12px">The % is the ranker's P(good).
+      <p style="margin-top:28px;color:#9ca3af;font-size:12px">The % is a fit score:
+      the model's P(good) blended with proximity to the office.
       Prices marked "est." derive Warmmiete from Kaltmiete + assumed Nebenkosten.</p>
     </div>"""
 

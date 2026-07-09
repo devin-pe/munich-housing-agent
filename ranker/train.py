@@ -31,11 +31,12 @@ FEATURES_CSV = ROOT / "data" / "features.csv"
 PIPELINE = ROOT / "models" / "feature_pipeline.joblib"
 SCORER = ROOT / "models" / "scorer.joblib"
 REPORT = ROOT / "reports" / "cv.md"
-FEATURE_COLS = ["metro_walk_min", "price_per_m2", "price_eur", "aesthetic_score",
-                "desc_pca_0", "desc_pca_1"]
-# Heuristic direction: good = nicer photos, cheaper (per m² and absolute), closer to metro.
+FEATURE_COLS = ["metro_walk_min", "walk_to_office_min", "price_per_m2", "price_eur",
+                "aesthetic_score", "desc_pca_0", "desc_pca_1"]
+# Heuristic direction: good = nicer photos, cheaper, closer to metro & to the office.
 HEURISTIC_SIGNS = {"aesthetic_score": +1, "price_per_m2": -1, "price_eur": -1,
-                   "metro_walk_min": -1, "desc_pca_0": 0, "desc_pca_1": 0}
+                   "metro_walk_min": -1, "walk_to_office_min": -1,
+                   "desc_pca_0": 0, "desc_pca_1": 0}
 SEED = 0
 
 

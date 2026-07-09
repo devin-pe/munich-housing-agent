@@ -1,19 +1,20 @@
 # Ranker cross-validation (stratified 5-fold)
 
-n=106 (53 pos / 53 neg), features=['metro_walk_min', 'price_per_m2', 'price_eur', 'aesthetic_score', 'desc_pca_0', 'desc_pca_1']
+n=106 (53 pos / 53 neg), features=['metro_walk_min', 'walk_to_office_min', 'price_per_m2', 'price_eur', 'aesthetic_score', 'desc_pca_0', 'desc_pca_1']
 
 | model | ROC-AUC (mean±std) | PR-AUC | accuracy | per-fold AUC |
 |---|---|---|---|---|
-| heuristic | 0.461 ± 0.128 | 0.553 ± 0.056 | 0.462 ± 0.055 | 0.39, 0.65, 0.40, 0.30, 0.57 |
-| logreg | 0.647 ± 0.092 | 0.660 ± 0.072 | 0.594 ± 0.081 | 0.74, 0.56, 0.63, 0.76, 0.54 |
-| catboost | 0.652 ± 0.108 | 0.687 ± 0.051 | 0.584 ± 0.121 | 0.74, 0.55, 0.63, 0.81, 0.53 |
-Winner: **catboost** (AUC 0.652) vs heuristic 0.461.
+| heuristic | 0.502 ± 0.122 | 0.558 ± 0.078 | 0.490 ± 0.070 | 0.44, 0.65, 0.48, 0.32, 0.63 |
+| logreg | 0.625 ± 0.106 | 0.642 ± 0.085 | 0.584 ± 0.050 | 0.74, 0.55, 0.55, 0.77, 0.53 |
+| catboost | 0.664 ± 0.094 | 0.731 ± 0.058 | 0.537 ± 0.091 | 0.80, 0.53, 0.64, 0.73, 0.63 |
+Winner: **catboost** (AUC 0.664) vs heuristic 0.502.
 
 ## Interpretability
 CatBoost feature importances:
-  - price_eur: 39.8
-  - aesthetic_score: 17.6
-  - desc_pca_0: 17.5
-  - desc_pca_1: 8.9
-  - metro_walk_min: 8.2
-  - price_per_m2: 7.9
+  - price_eur: 38.1
+  - aesthetic_score: 15.6
+  - desc_pca_0: 13.7
+  - desc_pca_1: 10.8
+  - walk_to_office_min: 9.2
+  - price_per_m2: 7.4
+  - metro_walk_min: 5.3

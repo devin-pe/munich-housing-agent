@@ -61,6 +61,7 @@ class EmailConfig:
 @dataclass
 class DigestConfig:
     mode: str            # by_site | ranked
+    rank_walk_weight: float   # ranked mode: 0=pure model P(good), 1=pure office-proximity
 
 
 @dataclass
@@ -174,7 +175,8 @@ def load_config(path: str | Path = "config.yaml") -> Config:
     )
 
     d = raw.get("digest", {})
-    digest = DigestConfig(mode=str(d.get("mode", "by_site")))
+    digest = DigestConfig(mode=str(d.get("mode", "by_site")),
+                          rank_walk_weight=float(d.get("rank_walk_weight", 0.4)))
 
     return Config(
         search=search,

@@ -75,7 +75,7 @@ def run(config: Config, dry_run: bool = False) -> int:
     # offline scorer isn't available — and by_site never imports the ML pipeline.
     mode = config.digest.mode
     if mode == "ranked" and new_listings:
-        mode = _rank_listings(new_listings)
+        mode = _rank_listings(new_listings, config)
 
     # 4. Email
     if not new_listings and not config.email.send_when_empty:
@@ -96,16 +96,19 @@ def run(config: Config, dry_run: bool = False) -> int:
     return 0 if ok else 1
 
 
-def _rank_listings(listings: list[Listing]) -> str:
+def _rank_listings(listings: list[Listing], config: Config) -> str:
     """Score each listing with the offline ranker and sort best-first (in place).
     Returns the effective digest mode: 'ranked' on success, else 'by_site'.
 
     Each survivor is enriched from its detail page (description + photos) so the
     ranker scores on real image/text features rather than median-imputing them.
+    The final sort blends the model's P(good) with proximity to the office
+    (config.digest.rank_walk_weight), so nearer places rank higher.
     """
     try:
         from ranker.score import score_listing, scorer_available
         from ranker.enrich import enrich_listing
+        from ranker.features import walk_to_office_min
     except Exception as exc:
         logger.warning("ranked mode: ranker not importable (%s) — using by_site", exc)
         return "by_site"
@@ -114,6 +117,7 @@ def _rank_listings(listings: list[Listing]) -> str:
                        "(run `python -m ranker.train`)")
         return "by_site"
 
+    anchor = (config.search.anchor_lat, config.search.anchor_lng)
     scored = enriched = 0
     for lg in listings:
         rec = {"warm_price_eur": lg.warm_price_eur, "price_eur": lg.price_eur,
@@ -127,15 +131,36 @@ def _rank_listings(listings: list[Listing]) -> str:
         except Exception as exc:
             logger.debug("enrich failed for %s (%s)", lg.dedup_key(), exc)
         try:
-            lg.extra["score"] = round(float(score_listing(rec)), 4)
+            lg.extra["p_good"] = round(float(score_listing(rec)), 4)
             scored += 1
         except Exception as exc:
             logger.warning("scoring failed for %s (%s)", lg.dedup_key(), exc)
-            lg.extra["score"] = 0.0
+            lg.extra["p_good"] = 0.0
+        if lg.lat is not None and lg.lng is not None:
+            lg.extra["walk_office_min"] = walk_to_office_min((lg.lat, lg.lng), anchor)
+
+    _apply_walk_blend(listings, config.digest.rank_walk_weight)
     listings.sort(key=lambda l: l.extra.get("score", 0.0), reverse=True)
-    logger.info("Ranked %d/%d listings by P(good) (%d enriched from detail pages)",
-                scored, len(listings), enriched)
+    logger.info("Ranked %d/%d listings (walk_weight=%.2f, %d enriched from detail pages)",
+                scored, len(listings), config.digest.rank_walk_weight, enriched)
     return "ranked"
+
+
+def _apply_walk_blend(listings: list[Listing], w: float) -> None:
+    """Set lg.extra['score'] = (1-w)*P(good) + w*closeness, where closeness is the
+    office-proximity min-max normalized across today's survivors (closest=1)."""
+    walks = [l.extra.get("walk_office_min") for l in listings
+             if l.extra.get("walk_office_min") is not None]
+    lo, hi = (min(walks), max(walks)) if walks else (0.0, 0.0)
+    span = (hi - lo) or 1.0
+    for lg in listings:
+        p = lg.extra.get("p_good", 0.0)
+        wk = lg.extra.get("walk_office_min")
+        if w <= 0 or wk is None:
+            closeness = None
+        else:
+            closeness = 1.0 - (wk - lo) / span      # nearest -> 1, farthest -> 0
+        lg.extra["score"] = round(p if closeness is None else (1 - w) * p + w * closeness, 4)
 
 
 def _write_preview(config: Config, listings: list[Listing], failed_sources: list[str],
