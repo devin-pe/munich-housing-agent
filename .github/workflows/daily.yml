@@ -21,6 +21,7 @@ permissions:
 jobs:
   digest:
     runs-on: ubuntu-latest
+    timeout-minutes: 45          # don't let a slow ranked run hang the job forever
     concurrency:
       group: housing-digest    # never overlap runs
       cancel-in-progress: false
@@ -35,14 +36,17 @@ jobs:
             requirements.txt
             ranker/requirements.txt
 
-      - name: Install dependencies
+      - name: Install core dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # Ranker deps (torch/CLIP/MiniLM/CatBoost) so digest.mode: ranked works.
-          # Heavy (~1.5 GB) but pip-cached between runs. Remove this line to keep the
-          # cloud job on by_site (the agent falls back automatically without them).
-          pip install -r ranker/requirements.txt
+
+      - name: Install ranker dependencies (optional, for ranked mode)
+        # Heavy (~1.5 GB: torch/CLIP/MiniLM/CatBoost), pip-cached between runs.
+        # NON-FATAL: if it fails, the agent still runs and the digest falls back to
+        # by_site, so you always get an email. Remove this step to keep CI on by_site.
+        continue-on-error: true
+        run: pip install -r ranker/requirements.txt
 
       # Cache the downloaded encoder weights (CLIP ViT-B/32 ~350 MB, MiniLM ~90 MB)
       # so ranked runs don't re-download them every day.
